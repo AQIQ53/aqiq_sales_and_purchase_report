@@ -136,13 +136,13 @@ def get_columns():
 
 def get_data(conditions):
     data = frappe.db.sql(
-        """select s.custom_tims_cu_no as tims_cu_no, s.bill_no as supp_inv, s.bill_date as supp_inv_date, c.custom_local_and_international as custom_local_and_international, c.tax_id as pin_no, s.supplier_name as supplier_name, s.posting_date as posting_date, s.name as name,
+        """select s.custom_tims_cu_no as tims_cu_no, s.bill_no as supp_inv, s.bill_date as supp_inv_date, c.tax_id as pin_no, s.supplier_name as supplier_name, s.posting_date as posting_date, s.name as name,
 			s.return_against return_against, s.is_return as is_return, (select posting_date from `tabPurchase Invoice` where name=s.return_against) as cnote_date,
 			SUM(i.base_net_amount) as base_net_amount  
 		 	from `tabPurchase Invoice` s 
 			inner join `tabPurchase Invoice Item` i on s.name = i.parent
 			inner join `tabSupplier` c on s.supplier = c.name
-			where s.docstatus=1 and c.custom_local_and_international='Local' and c.custom_unregistered=0 and c.custom_import_vat=0 and i.custom_total_tax_percentage= '16%' {} group by s.name order by s.posting_date DESC""".format(
+			where s.docstatus=1 and c.custom_unregistered=0 and c.custom_import_vat=0 and i.custom_total_tax_percentage= '16%' {} group by s.name order by s.posting_date DESC""".format(
             conditions
         ),
         as_dict=1,

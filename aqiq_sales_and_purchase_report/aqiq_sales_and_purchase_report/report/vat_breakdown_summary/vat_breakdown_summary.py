@@ -120,7 +120,7 @@ def execute(filters=None):
 		 	from `tabPurchase Invoice` s 
 			inner join `tabPurchase Invoice Item` i on s.name = i.parent
 			inner join `tabSupplier` c on s.supplier = c.name
-			where s.docstatus=1 and c.custom_local_and_international='Local' and c.custom_unregistered=0 and c.custom_import_vat=0 and i.custom_total_tax_percentage= '16%' {} group by i.cost_center order by 1""".format(
+			where s.docstatus=1  and c.custom_unregistered=0 and c.custom_import_vat=0 and i.custom_total_tax_percentage= '16%' {} group by i.cost_center order by 1""".format(
             conditions
         ),
         as_dict=1,
@@ -148,7 +148,7 @@ def execute(filters=None):
         debug=1,
     )
 
-    # custom_import_vat_purchases = frappe.db.sql("""select s.cost_center as division, s.bill_no as supp_inv, s.bill_date as supp_inv_date, s.shipment_no as shipment_no, c.custom_local_and_international as custom_local_and_international, c.tax_id as pin_no, s.supplier as supplier, s.posting_date as posting_date, s.name as name,
+    # custom_import_vat_purchases = frappe.db.sql("""select s.cost_center as division, s.bill_no as supp_inv, s.bill_date as supp_inv_date, s.shipment_no as shipment_no, c.tax_id as pin_no, s.supplier as supplier, s.posting_date as posting_date, s.name as name,
     # 		s.description as description, s.return_against return_against, s.is_return as is_return, (select posting_date from `tabPurchase Invoice` where name=s.return_against) as cnote_date,
     # 		s.taxes_and_charges_added as base_net_amount
     # 	 	from `tabPurchase Invoice` s

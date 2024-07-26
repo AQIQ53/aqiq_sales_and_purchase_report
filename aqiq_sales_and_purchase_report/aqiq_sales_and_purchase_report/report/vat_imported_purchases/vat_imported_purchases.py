@@ -118,7 +118,7 @@ def get_columns():
 def get_data(conditions):
 
     data = frappe.db.sql(
-        """select s.custom_tims_cu_no as custom_tims_cu_no, s.bill_no as supp_inv, s.bill_date as supp_inv_date, s.custom_shipment_no as shipment_no, c.custom_local_and_international as local_and_international, c.tax_id as pin_no, s.supplier as supplier, s.posting_date as posting_date, s.name as name,
+        """select s.custom_tims_cu_no as custom_tims_cu_no, s.bill_no as supp_inv, s.bill_date as supp_inv_date, s.custom_shipment_no as shipment_no, c.tax_id as pin_no, s.supplier as supplier, s.posting_date as posting_date, s.name as name,
 			s.custom_description as custom_description, s.return_against return_against, s.is_return as is_return, (select posting_date from `tabPurchase Invoice` where name=s.return_against) as cnote_date,
 			s.taxes_and_charges_added as base_net_amount 
 		 	from `tabPurchase Invoice` s 

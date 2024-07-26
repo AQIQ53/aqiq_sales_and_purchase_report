@@ -19,7 +19,6 @@ def execute(filters=None):
 
     for d in query_data:
         row = {}
-        row["type"] = d.get("type")
         row["supplier_name"] = d.get("supplier_name")
         row["etr_sno"] = filters.get("etr_sno")
         row["supp_inv_date"] = d.get("supp_inv_date")
@@ -45,13 +44,6 @@ def execute(filters=None):
 def get_columns():
 
     columns = [
-        {
-            "fieldname": "type",
-            "label": _("type"),
-            "fieldtype": "Data",
-            "options": "Supplier",
-            "width": 200,
-        },
         {
             "fieldname": "supplier_name",
             "label": _("supplier"),
@@ -151,7 +143,7 @@ def get_columns():
 def get_data(conditions):
 
     data = frappe.db.sql(
-        """select s.bill_no as supp_inv, s.bill_date as supp_inv_date, c.custom_local_and_international as type,c.custom_company, s.supplier_name as supplier_name, s.posting_date as posting_date, s.name as name,
+        """select s.bill_no as supp_inv, s.bill_date as supp_inv_date,c.custom_company, s.supplier_name as supplier_name, s.posting_date as posting_date, s.name as name,
 			s.return_against return_against, s.is_return as is_return, (select posting_date from `tabPurchase Invoice` where name=s.return_against) as cnote_date,
 			s.custom_exit_border as custom_exit_border, s.custom_destination as custom_destination, s.custom_description as custom_description, s.custom_customs_entry as custom_customs_entry, SUM(i.base_net_amount) as base_net_amount 
 		 	from `tabPurchase Invoice` s 

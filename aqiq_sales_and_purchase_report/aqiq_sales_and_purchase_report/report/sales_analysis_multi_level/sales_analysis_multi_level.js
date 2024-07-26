@@ -23,7 +23,7 @@ frappe.query_reports["Sales Analysis Multi Level"] = {
 			fieldname: "level_1",
 			label: __("Level 1"),
 			fieldtype: "Select",
-			options: ["" , "Customer", "Item Group" , "Item", "Division", "Department", "Territory", "Local/Export"],
+			options: ["" , "Customer", "Item Group" , "Item", "Division", "Department", "Territory"],
 		},
 
 
@@ -31,7 +31,7 @@ frappe.query_reports["Sales Analysis Multi Level"] = {
 			fieldname: "level_2",
 			label: __("Level 2"),
 			fieldtype: "Select",
-			options: ["","Customer", "Item Group" , "Item" , "Division","Department", "Territory", "Local/Export"],
+			options: ["","Customer", "Item Group" , "Item" , "Division","Department", "Territory"],
 		},
 
 
@@ -39,7 +39,7 @@ frappe.query_reports["Sales Analysis Multi Level"] = {
 			fieldname: "level_3",
 			label: __("Level 3"),
 			fieldtype: "Select",
-			options: ["","Customer", "Item Group" , "Item" , "Division","Department", "Territory", "Local/Export"],
+			options: ["","Customer", "Item Group" , "Item" , "Division","Department", "Territory"],
 		},
 
 

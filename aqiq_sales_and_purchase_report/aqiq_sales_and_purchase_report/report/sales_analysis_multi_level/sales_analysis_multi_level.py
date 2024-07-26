@@ -73,8 +73,6 @@ def execute(filters=None):
 						"sales_person_contrib" : b.get("sales_person_contrib") or 0.0,
 						"rate" : b.get("rate"),
 
-						"custom_local_and_international" : b.get("custom_local_and_international") or "",
-
 						"item_code" : b.get("item_code") or "",
 						"item_name" : b.get("item_name") or "",
 						"status" : b.get("status") or "",
@@ -200,8 +198,6 @@ def execute(filters=None):
 							"customer_name" : c.get("customer_name") or "",
 							"sales_person_contrib" : c.get("sales_person_contrib") or 0.0,
 							"rate" : c.get("rate"),
-
-							"custom_local_and_international" : c.get("custom_local_and_international") or "",
 
 							"item_code" : c.get("item_code") or "",
 							"item_group" : c.get("item_group") or "",
@@ -329,7 +325,6 @@ def execute(filters=None):
 								"sales_person_contrib" : d.get("sales_person_contrib") or 0.0,
 								"rate" : d.get("rate"),
 
-								"custom_local_and_international" : d.get("custom_local_and_international") or "",
 
 								"item_code" : d.get("item_code") or "",
 								"item_group" : d.get("item_group") or "",
@@ -550,8 +545,6 @@ def get_conditions(filters):
 		conditions += " and s.status =  '{}' ".format(filters.get("status"))
 	if filters.get("company"):
 		conditions += " and s.company =  '{}' ".format(filters.get("company"))
-	if filters.get("custom_local_and_international"):
-		conditions += " and s.custom_local_and_international =  '{}' ".format(filters.get("custom_local_and_international"))
 
 	return conditions
 
@@ -564,7 +557,7 @@ def group_level_1(conditions = "" , grouping_level_1 = None, range_by = None , f
 		numbering = grouping_level_1.get("numbering")
 
 		data =  frappe.db.sql(""" select {}  as level_1 , 
-			YEAR(s.posting_date) as year, s.custom_local_and_international as custom_local_and_international 
+			YEAR(s.posting_date) as year
 			from `tabSales Invoice` s
 			INNER join `tabSales Invoice Item` i  on s.name = i.parent
 			where s.docstatus=1 {}   {}  order by s.posting_date desc """.format( numbering ,  conditions , grouping), as_dict=1, debug=False)	
@@ -587,8 +580,7 @@ def group_level_1_1(conditions = "" , grouping_level_1 = None,  grouping_level_v
 
 			i.base_amount as gross_profit, i.base_amount as gp, s.territory,
 			s.customer as customer, s.customer_name as customer_name, i.rate as rate,
-			s.project ,  s.cost_center as division, s.custom_department as department,  
-			s.custom_local_and_international as custom_local_and_international, YEAR(s.posting_date) as year  , s.status
+			s.project ,  s.cost_center as division, s.custom_department as department, YEAR(s.posting_date) as year  , s.status
 			from `tabSales Invoice` s
 			INNER join 	`tabSales Invoice Item` i  on s.name = i.parent
 			where s.docstatus=1 and {} = "{}" {}   order by 1 """.format(numbering, numbering.replace('"', '').strip(), grouping_level_value.replace('"', '').strip() if grouping_level_value else "NULL", conditions, sales_person= grouping_level_value), as_dict=1, debug=1)
@@ -609,7 +601,7 @@ def group_level_2(conditions = "" , grouping_level_1  = "", grouping_level_value
 			numbering_2 = grouping_level_2.get("numbering")
 
 			data =  frappe.db.sql(""" select  {} as level_1 ,  {} as level_2  ,
-			YEAR(s.posting_date) as year, s.custom_local_and_international as custom_local_and_international
+			YEAR(s.posting_date) as year
 			from `tabSales Invoice` s
 			inner join 	`tabSales Invoice Item` i  on s.name = i.parent
 			where s.docstatus=1 and {} = "{}" {}  {} , {} order by s.posting_date desc 
@@ -637,7 +629,7 @@ def group_level_2_2(conditions = "" , grouping_level_1  = "", grouping_level_val
 				sle.warehouse=i.warehouse and sle.voucher_type IN ('Delivery Note', 'Sales Invoice') and 
 				sle.voucher_no = IF(s.update_stock=0, i.delivery_note, i.parent) limit 1)*i.stock_qty as item_cost,
  			
- 			i.base_amount as gross_profit , s.custom_local_and_international as custom_local_and_international,
+ 			i.base_amount as gross_profit ,
  			i.base_amount as gp,  s.territory ,
  			s.customer as customer, s.customer_name as customer_name, i.rate as rate,
  			s.project ,  s.cost_center as division,s.custom_department as department, s.status
@@ -676,7 +668,7 @@ def group_level_3_3(conditions = "" ,
 				sle.warehouse=i.warehouse and sle.voucher_type IN ('Delivery Note', 'Sales Invoice') and 
 				sle.voucher_no = IF(s.update_stock=0, i.delivery_note, i.parent) limit 1)*i.stock_qty as item_cost,
 	 			
-	 			i.base_amount as gross_profit , s.custom_local_and_international as custom_local_and_international,
+	 			i.base_amount as gross_profit ,
 	 			i.base_amount as gp,  s.territory,
 	 			s.customer as customer, s.customer_name as customer_name, i.rate as rate,
 	 			s.project ,  s.cost_center as division, s.custom_department as department, s.status
@@ -703,7 +695,7 @@ def group_level_3(conditions = "", grouping_level_1 = "" , grouping_level_value_
 				numbering_3 = grouping_level_3.get("numbering")
 
 				data =  frappe.db.sql(""" select  {} as level_1 ,  {} as level_2  , {} as level_3,
-				YEAR(s.posting_date) as year, s.custom_local_and_international as custom_local_and_international
+				YEAR(s.posting_date) as year
 				from `tabSales Invoice` s
 				inner join 	`tabSales Invoice Item` i  on s.name = i.parent
 				where s.docstatus=1 and {} = "{}"  and {} = "{}"  {}  {} , {}, {} order by s.posting_date desc 
@@ -731,7 +723,7 @@ def get_data_normal(conditions   = "", filters = ""):
 			sle.voucher_no = IF(s.update_stock=0, i.delivery_note, i.parent) limit 1)*i.stock_qty as item_cost,
 			
 
-			i.base_amount as gross_profit, s.custom_local_and_international as custom_local_and_international,
+			i.base_amount as gross_profit,
 			i.base_amount as gp,  s.territory,
 			s.customer as customer, s.customer_name as customer_name, i.rate as rate,
 
@@ -771,7 +763,6 @@ def get_data_normal(conditions   = "", filters = ""):
 			row["department"] = d.get("department")
 			row["year"] = d.get("year")
 			row["status"] = d.get("status")
-			row["custom_local_and_international"] = d.get("custom_local_and_international") or ""
 			row["rate"] = d.get("rate")
 			row["sales_person"] = d.get("sales_person")
 			row["sales_person_contrib"] = d.get("sales_person_contrib")
@@ -803,7 +794,7 @@ def get_data_normal(conditions   = "", filters = ""):
 
 def get_data_with_level_1_2(conditions   = "", filters = "" , level_1 = "" , level_2 = ""):
 		data =  frappe.db.sql(""" select  sum(round(i.qty, 2)) as qty, 
-			YEAR(s.posting_date) as year, s.custom_local_and_international as custom_local_and_international 
+			YEAR(s.posting_date) as year
 			from `tabSales Invoice` s
 			inner join 	`tabSales Invoice Item` i  on s.name = i.parent
 			where s.docstatus=1 and s.is_return=0  and s.customer_name = "{}" and i.item_name = "{}" {}  order by s.posting_date desc """.format( level_1.replace('"', '').strip() , level_2.replace('"', '').strip() , conditions), as_dict=1)									
@@ -824,7 +815,7 @@ def get_data_with_level_1_with_range(conditions = "", grouping_level_1 = "" , gr
 			ranges = ranging_group.get("ranges")
 
 		data =  frappe.db.sql(""" select  {}   as level_1 , 
-			concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period, s.custom_local_and_international as custom_local_and_international,  
+			concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period, 
 			{}   as numbering,
 			{} as ranged,
 			YEAR(s.posting_date) as year,
@@ -862,7 +853,7 @@ def get_data_with_level_1_2_with_range(conditions = "", grouping_level_1 = "" , 
 				ranges = ranging_group.get("ranges")
 
 			data =  frappe.db.sql(""" select  {}   as level_1 , {} as level_2 , 
-				concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period , s.custom_local_and_international as custom_local_and_international,
+				concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period ,
 				{}   as numbering,
 				{} as ranged,
 				YEAR(s.posting_date) as year ,
@@ -902,7 +893,7 @@ def get_data_with_level_1_2_3_with_range(conditions = "", grouping_level_1 = "" 
 					ranges = ranging_group.get("ranges")
 
 				data =  frappe.db.sql(""" select  {}   as level_1 , {} as level_2 , {} as level_3,  
-					concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period , s.custom_local_and_international as custom_local_and_international,
+					concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period ,
 					{}   as numbering,
 					{} as ranged,
 					YEAR(s.posting_date) as year ,
@@ -1131,12 +1122,6 @@ def get_columns(conditions,filters , get_range_group_for_columns = "" ):
 					"label": _("Status"),
 					"fieldtype": "Data",
 					"width": 150
-				},
-				{
-					"fieldname": "custom_local_and_international",
-					"label": _("Local/International"),
-					"fieldtype": "Data",
-					"width": 150
 				}
 			]
 			)
@@ -1226,10 +1211,6 @@ def grouping_by_level_1(filters):
 			grouping += "group by s.custom_department  "
 			numbering = "s.custom_department"
 
-		if filters.get("level_1")=='Local/Export':
-			grouping += "group by s.custom_local_and_international "
-			numbering = "s.custom_local_and_international"
-
 	return { "grouping" : grouping , "numbering" : numbering }
 
 
@@ -1266,9 +1247,6 @@ def grouping_by_level_2(filters = None):
 			grouping += "s.custom_department  "
 			numbering = "s.custom_department"
 
-		if filters.get("level_2")=='Local/Export':
-			grouping += "s.custom_local_and_international"
-			numbering = "s.custom_local_and_international"
 
 	return { "grouping" : grouping , "numbering" : numbering }
 
@@ -1308,9 +1286,6 @@ def grouping_by_level_3(filters = None):
 			grouping += "s.custom_department  "
 			numbering = "s.custom_department"
 
-		if filters.get("level_3")=='Local/Export':
-			grouping += "s.custom_local_and_international"
-			numbering = "s.custom_local_and_international"
 
 	return { "grouping" : grouping , "numbering" : numbering }
 
@@ -1432,7 +1407,7 @@ def get_range_group_for_columns(conditions = "", filters  = ""):
 				ranges = grouping_ranged.get("ranges") # s.customer_name 
 
 				query_string_range +=  """ ,
-							concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period , s.custom_local_and_international as custom_local_and_international,
+							concat('{}', '-', {}   , '-', YEAR(s.posting_date) ) as period ,
 							{}   as numbering,
 							{} as ranged,
 							YEAR(s.posting_date) as year """.format(ranges , numbering_range ,  numbering_range  , numbering_range )
