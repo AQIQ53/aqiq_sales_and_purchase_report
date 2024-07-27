@@ -230,5 +230,6 @@ app_license = "mit"
 
 fixtures = [
     "Client Script",
-    "Custom Field"
+    "Custom Field",
+    "Server Script"
 ]
